@@ -9,13 +9,13 @@ bool data[dataLength];
 
 void setup() {
   Serial.begin(115200);
-  pinMode(AM2301, OUTPUT);
-  digitalWrite(AM2301, HIGH); 
   Serial.println("Begin");
 
 }
 
 void loop() {
+  pinMode(AM2301, OUTPUT);
+  digitalWrite(AM2301, HIGH); 
   //data read loop
   Serial.println("requesting data");
   digitalWrite(AM2301,LOW);
@@ -27,8 +27,8 @@ void loop() {
   }
   //data decode loop
   for (int i = 0; i < dataLength; i++) {
-    if (dataTime[i] >= 67) data[i] = 1;
-    if (dataTime[i] <= 31) data[i] = 0;
+    if (dataTime[i] >= 60) data[i] = 1;
+    if (dataTime[i] <= 40) data[i] = 0;
     Serial.print(data[i]);
     }
    delay(5000);
