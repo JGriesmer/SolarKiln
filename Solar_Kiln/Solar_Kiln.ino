@@ -5,7 +5,8 @@
 #define AM2301 8
 #define dataLength 40
 long dataTime[dataLength];
-bool data[dataLength];
+int temp = 0;
+int humidity = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -14,11 +15,14 @@ void setup() {
 }
 
 void loop() {
+  //reset values
+  temp = 0;
+  humidity = 0;
   pinMode(AM2301, OUTPUT);
-  digitalWrite(AM2301, HIGH); 
+  digitalWrite(AM2301, HIGH);
   //data read loop
   Serial.println("requesting data");
-  digitalWrite(AM2301,LOW);
+  digitalWrite(AM2301, LOW);
   delay(2);
   pinMode(AM2301, INPUT);
   delayMicroseconds(150);
@@ -26,10 +30,13 @@ void loop() {
     dataTime[i] = pulseIn(AM2301, HIGH);
   }
   //data decode loop
-  for (int i = 0; i < dataLength; i++) {
-    if (dataTime[i] >= 60) data[i] = 1;
-    if (dataTime[i] <= 40) data[i] = 0;
-    Serial.print(data[i]);
-    }
-   delay(5000);
+  for (int i = 0; i < 16; i++) {
+    humidity += ((2 ^ (15 - i)) * ((dataTime[i] < 40) ? 0 : 1));
+    temp += ((2 ^ (15 - i)) * ((dataTime[i + 16] < 40) ? 0 : 1));
+  }
+  Serial.print("Humidity: ");
+  Serial.print(humidity);
+  Serial.print(" Temp: ");
+  Serial.println(temp);
+  delay(5000);
 }
