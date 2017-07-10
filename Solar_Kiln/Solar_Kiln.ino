@@ -5,8 +5,8 @@
 #define AM2301 8
 #define dataLength 40
 long dataTime[dataLength];
-int temp = 0;
-int humidity = 0;
+double temp = 0;
+double humidity = 0;
 
 void setup() {
   Serial.begin(115200);
@@ -16,8 +16,7 @@ void setup() {
 
 void loop() {
   //reset values
-  temp = 0;
-  humidity = 0;
+
   pinMode(AM2301, OUTPUT);
   digitalWrite(AM2301, HIGH);
   //data read loop
@@ -30,13 +29,23 @@ void loop() {
     dataTime[i] = pulseIn(AM2301, HIGH);
   }
   //data decode loop
+  temp = 0;
+  humidity = 0;
   for (int i = 0; i < 16; i++) {
-    humidity += ((2 ^ (15 - i)) * ((dataTime[i] < 40) ? 0 : 1));
-    temp += ((2 ^ (15 - i)) * ((dataTime[i + 16] < 40) ? 0 : 1));
+    humidity += ((pow(2 , (15 - i))) * ((dataTime[i] < 30) ? 0 : 1));
+    temp += ((pow(2, (15 - i))) * ((dataTime[i + 16] < 30) ? 0 : 1));
+    Serial.print(dataTime[i + 16]);
+    Serial.println(temp);
   }
+  humidity /= 10;
+  temp /= 10;
+  //Convert Celsius to Fahrenheit
+  temp = (temp * 1.8) + 32;
+  //Print values to the serial port
   Serial.print("Humidity: ");
   Serial.print(humidity);
   Serial.print(" Temp: ");
   Serial.println(temp);
+  //wait for 5 seconds. sensor maximum requests per minute is 30
   delay(5000);
 }
