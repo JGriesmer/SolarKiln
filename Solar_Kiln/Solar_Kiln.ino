@@ -1,3 +1,18 @@
+//Library Includes
+#include <SPI.h>
+#include <WiFi.h>
+#include <UbidotsCC3200.h>
+
+//UbiDotsCode
+#define TOKEN "fDmCLQ7smRI2kTKp2qgbZO0PRCV6ap"
+#define Variable2 "Humidity"
+
+Ubidots client(TOKEN);
+
+//Wifi Stuffs
+#define SSID "P7S59"
+#define Pass "K72Q8MPR3K98G7F3"
+
 //code to use the AM2301/DHT11 sensor with the CC3200
 //Start length: .8-20mSec
 //0 high length: 22-30uSec
@@ -5,11 +20,13 @@
 #define AM2301 8
 #define dataLength 40
 long dataTime[dataLength];
-double temp = 0;
-double humidity = 0;
+float temp = 0;
+float humidity = 0;
 
 void setup() {
   Serial.begin(115200);
+  //connect to the wifi
+  client.wifiConnection(SSID, Pass);
   Serial.println("Begin");
 
 }
@@ -34,8 +51,8 @@ void loop() {
   for (int i = 0; i < 16; i++) {
     humidity += ((pow(2 , (15 - i))) * ((dataTime[i] < 30) ? 0 : 1));
     temp += ((pow(2, (15 - i))) * ((dataTime[i + 16] < 30) ? 0 : 1));
-    Serial.print(dataTime[i + 16]);
-    Serial.println(temp);
+    //Serial.print(dataTime[i + 16]);
+    //Serial.println(temp);
   }
   humidity /= 10;
   temp /= 10;
@@ -47,5 +64,8 @@ void loop() {
   Serial.print(" Temp: ");
   Serial.println(temp);
   //wait for 5 seconds. sensor maximum requests per minute is 30
-  delay(5000);
+  client.add("Humidity", humidity);
+  client.add("Temperature", temp);
+  client.sendAll();
+  delay(10000);
 }
