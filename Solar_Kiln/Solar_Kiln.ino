@@ -1,3 +1,9 @@
+//Schematic
+//CC3200 VCC to Power
+//33 kOhm Resistor between VCC and signal
+//Signal to P62 on CC3200
+//GND to GND 
+
 //Library Includes
 #include <SPI.h>
 #include <WiFi.h>
@@ -11,7 +17,7 @@ Ubidots client(TOKEN);
 
 //Wifi Stuffs
 #define SSID "P7S59"
-#define Pass "K72Q8MPR3K98G7F3"
+#define Pass "****"
 
 //code to use the AM2301/DHT11 sensor with the CC3200
 //Start length: .8-20mSec
